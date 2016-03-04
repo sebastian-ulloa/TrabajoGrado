@@ -18,6 +18,16 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Controlador\Kinect.h" />
+    <ClInclude Include="Modelo\ITK.h" />
+    <ClInclude Include="Vista\VTK.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Controlador\Kinect.cpp" />
+    <ClCompile Include="Modelo\ITK.cpp" />
+    <ClCompile Include="Vista\VTK.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D7CEDEA3-2E8B-45F9-A750-F781F1DFB184}</ProjectGuid>
     <RootNamespace>TrabajoGradoMVC</RootNamespace>
@@ -109,8 +119,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
