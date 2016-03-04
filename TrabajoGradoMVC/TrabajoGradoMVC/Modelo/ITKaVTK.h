@@ -3,7 +3,10 @@
 #include <itkQuadrilateralCell.h>
 #include <vtkCellArray.h>
 #include <vtkUnstructuredGrid.h>
-#include "Deformacion.h"
+#include <itkSimplexMesh.h>
+
+typedef itk::Mesh< float, 3 >  TMallaTriangular;
+
 
 class ITKaVTK
 {
