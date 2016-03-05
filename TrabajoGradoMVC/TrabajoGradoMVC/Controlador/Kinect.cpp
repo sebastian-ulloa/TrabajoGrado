@@ -16,8 +16,9 @@ Kinect::~Kinect()
 void Kinect::inicializar()
 {
 	visualizacion->mostrarGridInicial(deformacion->crearEsfera());
-//	this->deformar();
-//	visualizacion->actualizarVentana();
+	this->deformar();
+	visualizacion->actualizarVentana();
+	std::cout << "despues de visualizar" << std::endl;
 }
 
 void Kinect::deformar()

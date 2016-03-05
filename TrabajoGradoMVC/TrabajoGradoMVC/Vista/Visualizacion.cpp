@@ -12,24 +12,23 @@ Visualizacion::Visualizacion(){
 Visualizacion::~Visualizacion()
 {
 }
-
+vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
 void Visualizacion::mostrarGridInicial(vtkPolyData * grid)
 {
 	this->grid = grid;
 	vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
+
 	vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
 	mapper->SetInputData(grid);
 	actor->SetMapper(mapper);
 	renderer->AddActor(actor);
 	ventana->AddRenderer(renderer);
-	std::cout << "antes de visualizar" << std::endl;
-	actualizarVentana();
-	std::cout << "despues de visualizar" << std::endl;
+	ventana->Render();
 }
 
 void Visualizacion::actualizarVentana()
 {
+	actor->GetProperty()->SetColor(0.68627, 0.88627, 0.87843);
 	ventana->Render();
 } 
 void Visualizacion::esferaprueba() {

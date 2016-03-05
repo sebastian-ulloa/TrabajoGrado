@@ -9,6 +9,7 @@
 #include <vtkSphereSource.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
+#include <vtkProperty.h>
 class Visualizacion
 {
 public:
