@@ -13,6 +13,7 @@ class Deformacion
 {
 public:
 	Deformacion();
+
 	~Deformacion();
 	vtkUnstructuredGrid* crearEsfera();
 private:

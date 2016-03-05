@@ -6,6 +6,7 @@ class Kinect
 public:
 	Kinect();
 	~Kinect();
+
 	void inicializar();
 private:
 	Deformacion *deformacion;

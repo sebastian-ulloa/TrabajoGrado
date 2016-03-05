@@ -16,4 +16,5 @@ Kinect::~Kinect()
 void Kinect::inicializar()
 {
 	visualizacion->mostrarGridInicial(deformacion->crearEsfera());
+
 }

@@ -13,6 +13,7 @@ public:
 	typedef itk::TriangleCell<CellInterfaceType>      floatTriangleCell;
 	typedef itk::QuadrilateralCell<CellInterfaceType> floatQuadrilateralCell;
 
+
 	// Set the vtkCellArray that will be constructed
 	void SetCellArray(vtkCellArray* a)
 	{

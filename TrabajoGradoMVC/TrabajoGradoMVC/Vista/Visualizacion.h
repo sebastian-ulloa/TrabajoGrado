@@ -14,6 +14,7 @@ public:
 	~Visualizacion();
 	void mostrarGridInicial(vtkUnstructuredGrid* grid);
 	void actualizarVentana();
+
 private:
 	vtkUnstructuredGrid* grid;
 	vtkSmartPointer<vtkRenderWindow> ventana;
