@@ -67,7 +67,7 @@ typedef itk::CellInterfaceVisitorImplementation<
 	itk::QuadrilateralCell< itk::CellInterface<TMallaTriangular::PixelType, TMallaTriangular::CellTraits > >,
 	VistVTKCellsClass> QuadrilateralVisitor;
 
-vtkUnstructuredGrid * ITKaVTK::MeshToUnstructuredGrid(TMallaTriangular::Pointer mesh)
+vtkUnstructuredGrid * ITKaVTK::MeshToUnstructuredGrid(TMallaTriangular* mesh)
 {
 	// Get the number of points in the mesh
 	int numPoints = mesh->GetNumberOfPoints();

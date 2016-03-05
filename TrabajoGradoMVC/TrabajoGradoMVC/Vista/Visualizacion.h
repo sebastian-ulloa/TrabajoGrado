@@ -6,6 +6,7 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkSmartPointer.h>
 #include <vtkUnstructuredGrid.h>
+#include <stdlib.h>
 class Visualizacion
 {
 public:

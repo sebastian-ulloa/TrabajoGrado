@@ -2,9 +2,10 @@
 
 
 
-Visualizacion::Visualizacion(){
+Visualizacion::Visualizacion() {
 	ventana = vtkSmartPointer<vtkRenderWindow>::New();
 	interactor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
+	interactor->SetRenderWindow(ventana);
 }
 
 
