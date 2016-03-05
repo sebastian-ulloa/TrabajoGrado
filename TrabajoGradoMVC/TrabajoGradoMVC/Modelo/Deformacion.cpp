@@ -19,6 +19,7 @@ vtkUnstructuredGrid* Deformacion::crearEsfera()
 	esfera->Update();
 	esferaSimplex = triangularASimplex(esfera->GetOutput());
 	grid = conversor.MeshToUnstructuredGrid(esfera->GetOutput());
+	
 	return grid;
 }
 
