@@ -6,17 +6,19 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkSmartPointer.h>
 #include <vtkUnstructuredGrid.h>
-#include <stdlib.h>
+#include <vtkSphereSource.h>
+#include <vtkPolyData.h>
+#include <vtkPolyDataMapper.h>
 class Visualizacion
 {
 public:
 	Visualizacion();
 	~Visualizacion();
-	void mostrarGridInicial(vtkUnstructuredGrid* grid);
+	void mostrarGridInicial(vtkPolyData* grid);
 	void actualizarVentana();
-
+	void esferaprueba();
 private:
-	vtkUnstructuredGrid* grid;
+	vtkPolyData* grid;
 	vtkSmartPointer<vtkRenderWindow> ventana;
 	vtkSmartPointer<vtkRenderWindowInteractor> interactor;
 };

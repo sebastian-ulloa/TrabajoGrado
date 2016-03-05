@@ -1,5 +1,5 @@
 #include "Kinect.h"
-
+#include <Windows.h>
 
 
 Kinect::Kinect()
@@ -16,5 +16,11 @@ Kinect::~Kinect()
 void Kinect::inicializar()
 {
 	visualizacion->mostrarGridInicial(deformacion->crearEsfera());
+//	this->deformar();
+//	visualizacion->actualizarVentana();
+}
 
+void Kinect::deformar()
+{
+	deformacion->inflar();
 }

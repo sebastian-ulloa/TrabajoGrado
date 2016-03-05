@@ -1,4 +1,5 @@
 #include "ITKaVTK.h"
+
 class VistVTKCellsClass
 {
 	vtkCellArray* m_Cells;
@@ -10,41 +11,52 @@ public:
 		TMallaTriangular::PixelType,
 		TMallaTriangular::CellTraits >  CellInterfaceType;
 
+	typedef itk::LineCell<CellInterfaceType> floatLineCell;
 	typedef itk::TriangleCell<CellInterfaceType>      floatTriangleCell;
 	typedef itk::QuadrilateralCell<CellInterfaceType> floatQuadrilateralCell;
-
 
 	// Set the vtkCellArray that will be constructed
 	void SetCellArray(vtkCellArray* a)
 	{
 		m_Cells = a;
 	}
+
 	// Set the cell counter pointer
 	void SetCellCounter(int* i)
 	{
 		m_LastCell = i;
 	}
+
 	// Set the type array for storing the vtk cell types
 	void SetTypeArray(int* i)
 	{
 		m_TypeArray = i;
 	}
-	// Visit a triangle and create the VTK_TRIANGLE cell 
+
+	// Visit a triangle and create the VTK_TRIANGLE cell
 	void Visit(unsigned long, floatTriangleCell* t)
 	{
 		m_Cells->InsertNextCell(3, (vtkIdType*)t->PointIdsBegin());
 		m_TypeArray[*m_LastCell] = VTK_TRIANGLE;
 		(*m_LastCell)++;
 	}
-	// Visit a triangle and create the VTK_QUAD cell 
+
+	// Visit a triangle and create the VTK_QUAD cell
 	void Visit(unsigned long, floatQuadrilateralCell* t)
 	{
 		m_Cells->InsertNextCell(4, (vtkIdType*)t->PointIdsBegin());
 		m_TypeArray[*m_LastCell] = VTK_QUAD;
 		(*m_LastCell)++;
 	}
-};
 
+	// Visit a line and create the VTK_LINE cell
+	void Visit(unsigned long, floatLineCell* t)
+	{
+		m_Cells->InsertNextCell(2, (vtkIdType*)t->PointIdsBegin());
+		m_TypeArray[*m_LastCell] = VTK_LINE;
+		(*m_LastCell)++;
+	}
+};
 
 ITKaVTK::ITKaVTK()
 {
@@ -56,87 +68,47 @@ ITKaVTK::~ITKaVTK()
 }
 
 
-
-typedef itk::CellInterfaceVisitorImplementation<
-	float, TMallaTriangular::CellTraits,
-	itk::TriangleCell< itk::CellInterface<TMallaTriangular::PixelType, TMallaTriangular::CellTraits > >,
-	VistVTKCellsClass> TriangleVisitor;
-
-
-typedef itk::CellInterfaceVisitorImplementation<
-	float, TMallaTriangular::CellTraits,
-	itk::QuadrilateralCell< itk::CellInterface<TMallaTriangular::PixelType, TMallaTriangular::CellTraits > >,
-	VistVTKCellsClass> QuadrilateralVisitor;
-
-vtkUnstructuredGrid * ITKaVTK::MeshToUnstructuredGrid(TMallaTriangular* mesh)
+vtkPolyData * ITKaVTK::meshToPolydata(TMallaTriangular::Pointer mesh)
 {
-	// Get the number of points in the mesh
-	int numPoints = mesh->GetNumberOfPoints();
-	if (numPoints == 0)
+	//Creat a new vtkPolyData*
+	vtkPolyData* newPolyData = vtkPolyData::New();
+
+	//Creat vtkPoints for insertion into newPolyData
+	vtkPoints *points = vtkPoints::New();
+
+	//Copy all points into the vtkPolyData structure
+	PointIterator pntIterator = mesh->GetPoints()->Begin();
+	PointIterator pntItEnd = mesh->GetPoints()->End();
+	for (int i = 0; pntIterator != pntItEnd; ++i, ++pntIterator)
 	{
-		mesh->Print(std::cerr);
-		std::cerr << "no points in Grid " << std::endl;
-		exit(-1);
+	PointType pnt = pntIterator.Value(); 
+			points->InsertPoint(i, pnt[0], pnt[1], pnt[2]);
 	}
-	// Create a vtkUnstructuredGrid
-	vtkUnstructuredGrid* vgrid = vtkUnstructuredGrid::New();
+	newPolyData->SetPoints(points);
+	points->Delete();
 
-	// Create the vtkPoints object and set the number of points
-	vtkPoints* vpoints = vtkPoints::New();
-	vpoints->SetNumberOfPoints(numPoints);
-	// iterate over all the points in the itk mesh filling in
-	// the vtkPoints object as we go
-	TMallaTriangular::PointsContainer::Pointer points = mesh->GetPoints();
-	for (TMallaTriangular::PointsContainer::Iterator i = points->Begin();
-	i != points->End(); ++i)
+	//Copy all cells into the vtkPolyData structure
+	//Creat vtkCellArray into which the cells are copied
+	vtkCellArray* triangle = vtkCellArray::New();
+	CellIterator cellIt = mesh->GetCells()->Begin();
+	CellIterator cellItEnd = mesh->GetCells()->End();
+	for (int it = 0; cellIt != cellItEnd; ++it, ++cellIt)
 	{
-		// Get the point index from the point container iterator
-		int idx = i->Index();
-		// Set the vtk point at the index with the the coord array from itk
-		// itk returns a const pointer, but vtk is not const correct, so
-		// we have to use a const cast to get rid of the const
-		vpoints->SetPoint(idx, const_cast<float*>(i->Value().GetDataPointer()));
+		TMallaTriangular::CellType * cellptr = cellIt.Value();
+		TMallaTriangular::CellType::PointIdIterator pntIdIter = cellptr->PointIdsBegin();
+		TMallaTriangular::CellType::PointIdIterator pntIdEnd = cellptr->PointIdsEnd();
+		vtkIdList* pts = vtkIdList::New();
+		for (; pntIdIter != pntIdEnd; ++pntIdIter)
+		{
+			pts->InsertNextId(*pntIdIter);
+		}
+		triangle->InsertNextCell(pts);
 	}
-	// Set the points on the vtk grid
-	vgrid->SetPoints(vpoints);
-
-	// Now create the cells using the MulitVisitor
-	// 1. Create a MultiVisitor
-	TMallaTriangular::CellType::MultiVisitor::Pointer mv =
-		TMallaTriangular::CellType::MultiVisitor::New();
-	// 2. Create a triangle and quadrilateral visitor
-	TriangleVisitor::Pointer tv = TriangleVisitor::New();
-	QuadrilateralVisitor::Pointer qv = QuadrilateralVisitor::New();
-	// 3. Set up the visitors
-	int vtkCellCount = 0; // running counter for current cell being inserted into vtk
-	int numCells = mesh->GetNumberOfCells();
-	int *types = new int[numCells]; // type array for vtk 
-									// create vtk cells and estimate the size
-	vtkCellArray* cells = vtkCellArray::New();
-	cells->EstimateSize(numCells, 4);
-	// Set the TypeArray CellCount and CellArray for both visitors
-	tv->SetTypeArray(types);
-	tv->SetCellCounter(&vtkCellCount);
-	tv->SetCellArray(cells);
-	qv->SetTypeArray(types);
-	qv->SetCellCounter(&vtkCellCount);
-	qv->SetCellArray(cells);
-	// add the visitors to the multivisitor
-	mv->AddVisitor(tv);
-	mv->AddVisitor(qv);
-	// Now ask the mesh to accept the multivisitor which
-	// will Call Visit for each cell in the mesh that matches the
-	// cell types of the visitors added to the MultiVisitor
-	mesh->Accept(mv);
-
-	// Now set the cells on the vtk grid with the type array and cell array
-	vgrid->SetCells(types, cells);
-
-	// Clean up vtk objects (no vtkSmartPointer ... )
-	cells->Delete();
-	vpoints->Delete();
-	// return the vtkUnstructuredGrid
-	return vgrid;
+	newPolyData->SetPolys(triangle);
+	triangle->Delete();
+	return newPolyData;
 }
+
+
 
 
