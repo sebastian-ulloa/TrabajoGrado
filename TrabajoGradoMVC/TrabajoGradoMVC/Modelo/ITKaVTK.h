@@ -15,6 +15,6 @@ class ITKaVTK
 public:
 	ITKaVTK();
 	~ITKaVTK();
-	vtkPolyData* meshToPolydata(TMallaTriangular::Pointer mesh);
+	vtkPolyData* meshToPolydata(TMallaTriangular* mesh);
 };
 

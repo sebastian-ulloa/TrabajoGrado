@@ -21,10 +21,10 @@ public:
 	void inflar();
 private:
 	ITKaVTK conversor;
-	TMallaSimplex::Pointer esferaSimplex;
+	TMallaSimplex* esferaSimplex;
 	vtkPolyData* grid;
-	TMallaSimplex::Pointer triangularASimplex(TMallaTriangular::Pointer malla);
-	TMallaTriangular* simplexATriangular(TMallaSimplex::Pointer malla);
+	TMallaSimplex* triangularASimplex(TMallaTriangular* malla);
+	TMallaTriangular* simplexATriangular(TMallaSimplex* malla);
 
 };
 

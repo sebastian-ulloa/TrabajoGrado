@@ -68,7 +68,7 @@ ITKaVTK::~ITKaVTK()
 }
 
 
-vtkPolyData * ITKaVTK::meshToPolydata(TMallaTriangular::Pointer mesh)
+vtkPolyData * ITKaVTK::meshToPolydata(TMallaTriangular* mesh)
 {
 	//Creat a new vtkPolyData*
 	vtkPolyData* newPolyData = vtkPolyData::New();
