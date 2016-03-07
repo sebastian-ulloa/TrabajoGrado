@@ -1,5 +1,4 @@
 #include "Kinect.h"
-#include <Windows.h>
 
 
 Kinect::Kinect()
