@@ -1,24 +1,24 @@
 #include "Visualizacion.h"
 
-
-
-Visualizacion::Visualizacion(){
+Visualizacion::Visualizacion() {
 	ventana = vtkSmartPointer<vtkRenderWindow>::New();
+	camera = vtkSmartPointer<vtkCamera>::New();
+	camera->SetPosition(0, 0, 50);
+	camera->SetFocalPoint(0, 0, 0);
+	ventana->SetSize(500, 500);
 	interactor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
 	interactor->SetRenderWindow(ventana);
 }
 
-
-Visualizacion::~Visualizacion()
-{
+Visualizacion::~Visualizacion() {
 }
 vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
-void Visualizacion::mostrarGridInicial(vtkPolyData * grid)
-{
+void Visualizacion::mostrarGridInicial(vtkPolyData * grid) {
 	this->grid = grid;
-	vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-
+	vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<
+			vtkPolyDataMapper>::New();
 	vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
+	renderer->SetActiveCamera(camera);
 	mapper->SetInputData(grid);
 	actor->SetMapper(mapper);
 	renderer->AddActor(actor);
@@ -26,33 +26,30 @@ void Visualizacion::mostrarGridInicial(vtkPolyData * grid)
 	ventana->Render();
 }
 
-void Visualizacion::actualizarVentana()
-{
+void Visualizacion::actualizarVentana() {
 	actor->GetProperty()->SetColor(0.68627, 0.88627, 0.87843);
 	ventana->Render();
-} 
+}
 void Visualizacion::esferaprueba() {
 	// Create a sphere
-	vtkSmartPointer<vtkSphereSource> sphereSource =
-		vtkSmartPointer<vtkSphereSource>::New();
+	vtkSmartPointer<vtkSphereSource> sphereSource = vtkSmartPointer<
+			vtkSphereSource>::New();
 	sphereSource->SetCenter(0.0, 0.0, 0.0);
 	sphereSource->SetRadius(5.0);
 
-	vtkSmartPointer<vtkPolyDataMapper> mapper =
-		vtkSmartPointer<vtkPolyDataMapper>::New();
+	vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<
+			vtkPolyDataMapper>::New();
 	mapper->SetInputConnection(sphereSource->GetOutputPort());
 
-	vtkSmartPointer<vtkActor> actor =
-		vtkSmartPointer<vtkActor>::New();
+	vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
 	actor->SetMapper(mapper);
 
-	vtkSmartPointer<vtkRenderer> renderer =
-		vtkSmartPointer<vtkRenderer>::New();
-	vtkSmartPointer<vtkRenderWindow> renderWindow =
-		vtkSmartPointer<vtkRenderWindow>::New();
+	vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
+	vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<
+			vtkRenderWindow>::New();
 	renderWindow->AddRenderer(renderer);
 	vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor =
-		vtkSmartPointer<vtkRenderWindowInteractor>::New();
+			vtkSmartPointer<vtkRenderWindowInteractor>::New();
 	renderWindowInteractor->SetRenderWindow(renderWindow);
 
 	renderer->AddActor(actor);

@@ -1,17 +1,17 @@
 #pragma once
-#include <vtkDataSetMapper.h>
-#include <vtkRenderer.h>
-#include <vtkRenderWindow.h>
-#include <vtkActor.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkSmartPointer.h>
-#include <vtkUnstructuredGrid.h>
-#include <vtkSphereSource.h>
-#include <vtkPolyData.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkProperty.h>
-class Visualizacion
-{
+#include  <vtkDataSetMapper.h>
+#include  <vtkRenderer.h>
+#include  <vtkRenderWindow.h>
+#include  <vtkActor.h>
+#include  <vtkRenderWindowInteractor.h>
+#include  <vtkSmartPointer.h>
+#include  <vtkUnstructuredGrid.h>
+#include  <vtkSphereSource.h>
+#include  <vtkPolyData.h>
+#include  <vtkPolyDataMapper.h>
+#include  <vtkProperty.h>
+#include  <vtkCamera.h>
+class Visualizacion {
 public:
 	Visualizacion();
 	~Visualizacion();
@@ -22,5 +22,6 @@ private:
 	vtkPolyData* grid;
 	vtkSmartPointer<vtkRenderWindow> ventana;
 	vtkSmartPointer<vtkRenderWindowInteractor> interactor;
+	vtkSmartPointer<vtkCamera> camera ;
 };
 
