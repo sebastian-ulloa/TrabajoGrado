@@ -2,7 +2,6 @@
 
 Deformacion::Deformacion() {
 	esferaSimplex = TMallaSimplex::New();
-	grid = vtkPolyData::New();
 	balloon = TDeformar::New();
 	convertirSimplex = TConvertir::New();
 	convertirTriangulo = TConvertirContrario::New();
@@ -19,37 +18,33 @@ vtkPolyData* Deformacion::crearEsfera() {
 	esfera->SetScale(escala);
 	esfera->SetResolution(5);
 	esfera->Update();
-	convertirSimplex->SetInput(esfera->GetOutput());
-	//convertirSimplex->Update();
-	esferaSimplex = convertirSimplex->GetOutput();
-	grid = conversor.meshToPolydata(esfera->GetOutput());
-	return grid;
+	esferaSimplex = triangularASimplex(esfera->GetOutput());
+	esferaSimplex->DisconnectPipeline();
+	return conversor.meshToPolydata(esfera->GetOutput());
 }
 
-TMallaSimplex* Deformacion::triangularASimplex(TMallaTriangular* malla) {
+TMallaSimplex::Pointer Deformacion::triangularASimplex(TMallaTriangular::Pointer malla) {
 	TConvertir::Pointer convertir = TConvertir::New();
 	convertir->SetInput(malla);
 	convertir->Update();
 	return convertir->GetOutput();
 }
 
-TMallaTriangular* Deformacion::simplexATriangular(TMallaSimplex* malla) {
+TMallaTriangular::Pointer Deformacion::simplexATriangular(TMallaSimplex::Pointer malla) {
 	TConvertirContrario::Pointer convertir = TConvertirContrario::New();
 	convertir->SetInput(malla);
 	convertir->Update();
 	return convertir->GetOutput();
 }
 
-void Deformacion::inflar() {
+vtkPolyData* Deformacion::inflar() {
 	balloon->SetInput(esferaSimplex);
-	balloon->SetAlpha(0.2);
-	balloon->SetBeta(0.1);
+	//balloon->SetAlpha(0.1);
+	//balloon->SetBeta(5);
 	balloon->SetKappa(0.01);
-	balloon->SetIterations(2000);
-	balloon->SetRigidity(0);
+	balloon->Update();
 	esferaSimplex = balloon->GetOutput();
-	convertirTriangulo->SetInput(esferaSimplex);
-	convertirTriangulo->Update();
-	grid = conversor.meshToPolydata(convertirTriangulo->GetOutput());
+	esferaSimplex->DisconnectPipeline();
+	return conversor.meshToPolydata(simplexATriangular(esferaSimplex));
 }
 

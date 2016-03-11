@@ -1,10 +1,12 @@
 #include "Visualizacion.h"
 
 Visualizacion::Visualizacion() {
+	actor = vtkSmartPointer<vtkActor>::New();
+	mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
 	ventana = vtkSmartPointer<vtkRenderWindow>::New();
 	camera = vtkSmartPointer<vtkCamera>::New();
-	camera->SetPosition(0, 0, 50);
-	camera->SetFocalPoint(0, 0, 0);
+	renderer = vtkSmartPointer<vtkRenderer>::New();
+	camera->SetPosition(0, 0, 40);
 	ventana->SetSize(500, 500);
 	interactor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
 	interactor->SetRenderWindow(ventana);
@@ -12,22 +14,19 @@ Visualizacion::Visualizacion() {
 
 Visualizacion::~Visualizacion() {
 }
-vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
-void Visualizacion::mostrarGridInicial(vtkPolyData * grid) {
-	this->grid = grid;
-	vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<
-			vtkPolyDataMapper>::New();
-	vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
+
+void Visualizacion::mostrarGridInicial(vtkPolyData * polydata) {
+	this->polydata = polydata;
 	renderer->SetActiveCamera(camera);
-	mapper->SetInputData(grid);
+	mapper->SetInputData(polydata);
 	actor->SetMapper(mapper);
 	renderer->AddActor(actor);
 	ventana->AddRenderer(renderer);
 	ventana->Render();
 }
 
-void Visualizacion::actualizarVentana() {
-	actor->GetProperty()->SetColor(0.68627, 0.88627, 0.87843);
+void Visualizacion::actualizarVentana(vtkPolyData* p) {
+	polydata->ShallowCopy(p);
 	ventana->Render();
 }
 void Visualizacion::esferaprueba() {

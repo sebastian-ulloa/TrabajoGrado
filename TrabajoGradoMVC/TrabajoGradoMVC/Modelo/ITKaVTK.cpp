@@ -86,7 +86,6 @@ vtkPolyData * ITKaVTK::meshToPolydata(TMallaTriangular* mesh)
 	}
 	newPolyData->SetPoints(points);
 	points->Delete();
-
 	//Copy all cells into the vtkPolyData structure
 	//Creat vtkCellArray into which the cells are copied
 	vtkCellArray* triangle = vtkCellArray::New();

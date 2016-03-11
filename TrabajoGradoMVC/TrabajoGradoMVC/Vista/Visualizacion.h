@@ -15,11 +15,14 @@ class Visualizacion {
 public:
 	Visualizacion();
 	~Visualizacion();
-	void mostrarGridInicial(vtkPolyData* grid);
-	void actualizarVentana();
+	void mostrarGridInicial(vtkPolyData* polydata);
+	void actualizarVentana(vtkPolyData* p);
 	void esferaprueba();
 private:
-	vtkPolyData* grid;
+	vtkPolyData* polydata;
+	vtkSmartPointer<vtkRenderer> renderer;
+	vtkSmartPointer<vtkPolyDataMapper> mapper;
+	vtkSmartPointer<vtkActor> actor;
 	vtkSmartPointer<vtkRenderWindow> ventana;
 	vtkSmartPointer<vtkRenderWindowInteractor> interactor;
 	vtkSmartPointer<vtkCamera> camera ;

@@ -19,16 +19,15 @@ public:
 	Deformacion();
 	~Deformacion();
 	vtkPolyData* crearEsfera();
-	void inflar();
+	vtkPolyData* inflar();
 private:
 	ITKaVTK conversor;
-	TMallaSimplex* esferaSimplex;
+	TMallaSimplex::Pointer esferaSimplex;
 	TDeformar::Pointer balloon;
 	TConvertir::Pointer convertirSimplex;
 	TConvertirContrario::Pointer convertirTriangulo;
-	vtkPolyData* grid;
-	TMallaSimplex* triangularASimplex(TMallaTriangular* malla);
-	TMallaTriangular* simplexATriangular(TMallaSimplex* malla);
+	TMallaSimplex::Pointer triangularASimplex(TMallaTriangular::Pointer malla);
+	TMallaTriangular::Pointer simplexATriangular(TMallaSimplex::Pointer malla);
 	Tcalculadora::Pointer calculadora;
 
 };
