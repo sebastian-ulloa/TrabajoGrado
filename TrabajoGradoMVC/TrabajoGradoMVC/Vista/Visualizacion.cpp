@@ -15,7 +15,7 @@ Visualizacion::Visualizacion() {
 Visualizacion::~Visualizacion() {
 }
 
-void Visualizacion::mostrarGridInicial(vtkPolyData * polydata) {
+void Visualizacion::mostrarObjetoInicial(vtkPolyData * polydata) {
 	this->polydata = polydata;
 	renderer->SetActiveCamera(camera);
 	mapper->SetInputData(polydata);

@@ -15,7 +15,7 @@ class Visualizacion {
 public:
 	Visualizacion();
 	~Visualizacion();
-	void mostrarGridInicial(vtkPolyData* polydata);
+	void mostrarObjetoInicial(vtkPolyData* polydata);
 	void actualizarVentana(vtkPolyData* p);
 	void esferaprueba();
 private:
