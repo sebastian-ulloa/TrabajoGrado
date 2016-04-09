@@ -1,4 +1,4 @@
-#include "Kinect.h"
+﻿#include "Kinect.h"
 
 
 Kinect::Kinect()
@@ -263,10 +263,148 @@ void Kinect::asignarValoresGestos()
 
 void Kinect::deteccion()
 {
+    if ( WAIT_OBJECT_0 == WaitForSingleObject ( m_hNextInteractionEvent, 0 ) )
+    {
+        cout << "entro ";
+        ShowInteraction();
+    }
     if ( WAIT_OBJECT_0 == WaitForSingleObject ( m_hNextSkeletonEvent, 0 ) )
     {
-        procesarGestos();
+        // procesarGestos();
     }
+    if (  WAIT_OBJECT_0 == WaitForSingleObject ( m_hNextDepthFrameEvent, 0 ) )
+    {
+        getDepthData();
+    }
+}
+
+void Kinect::getDepthData()
+{
+    HRESULT hr;
+    NUI_IMAGE_FRAME imageFrame;
+    // GET DEPTH FRAME
+    hr = sensor->NuiImageStreamGetNextFrame ( m_pDepthStreamHandle, 0, &imageFrame );
+    if ( FAILED ( hr ) )
+    {
+        return;
+    }
+    BOOL nearMode;
+    INuiFrameTexture* pTexture;
+    hr = sensor->NuiImageFrameGetDepthImagePixelFrameTexture (
+             m_pDepthStreamHandle, &imageFrame, &nearMode, &pTexture );
+    if ( FAILED ( hr ) )
+    {
+        sensor->NuiImageStreamReleaseFrame ( m_pDepthStreamHandle, &imageFrame );
+        return;
+    }
+    NUI_LOCKED_RECT LockedRect;
+    // LOCK THE FRAME SO THE KINECT KNOWS NOT TO MODIFY IT
+    pTexture->LockRect ( 0, &LockedRect, NULL, 0 );
+    // TEST IF THE RECEIVED DATA IS VALID
+    if ( LockedRect.Pitch != 0 )
+    {
+        //HAND INTERACTION
+        m_nuiIStream->ProcessDepth ( LockedRect.size, LockedRect.pBits, imageFrame.liTimeStamp );
+    }
+    pTexture->UnlockRect ( 0 );
+    pTexture->Release();
+    sensor->NuiImageStreamReleaseFrame ( m_pDepthStreamHandle, &imageFrame );
+}
+
+int Kinect::ShowInteraction()
+{
+    NUI_INTERACTION_FRAME Interaction_Frame;
+    HRESULT hr = m_nuiIStream->GetNextFrame ( 0, &Interaction_Frame );
+    if ( hr != S_OK )
+    {
+        if ( hr == E_POINTER )
+            cout << "E_POINTER          " << endl;
+        else if ( hr == E_NUI_FRAME_NO_DATA )
+        {
+            cout << "E_NUI_FRAME_NO_DATA" << endl;
+        }
+        return -1;
+    }
+    int trackingID = 0;
+    int event;
+    for ( int i = 0; i<NUI_SKELETON_COUNT; i++ )
+    {
+        COORD pos = { 0,0 };
+        HANDLE hOut = GetStdHandle ( STD_OUTPUT_HANDLE );
+        SetConsoleCursorPosition ( hOut, pos );
+        static int frameCount = 0;
+        frameCount++;
+        for ( int j = 0; j<NUI_USER_HANDPOINTER_COUNT; j++ )
+        {
+            if ( ( frameCount % 3 ) == 1 )
+            {
+                trackingID = Interaction_Frame.UserInfos[i].SkeletonTrackingId;
+                event = Interaction_Frame.UserInfos[i].HandPointerInfos[j].HandEventType;
+                DWORD state = Interaction_Frame.UserInfos[i].HandPointerInfos[j].State;
+                NUI_HAND_TYPE type = Interaction_Frame.UserInfos[i].HandPointerInfos[j].HandType;
+                if ( type == NUI_HAND_TYPE_NONE )
+                    continue;
+                if ( ( state&&NUI_HANDPOINTER_STATE_TRACKED ) == 0 )
+                    continue;
+                if ( ( state&&NUI_HANDPOINTER_STATE_ACTIVE ) == 0 )
+                    continue;
+                cout << "id=" << trackingID << "--------HandEventType=";
+                if ( event == NUI_HAND_EVENT_TYPE_GRIP )
+                {
+                    cout << "Grip ！！！   ";
+                }
+                else if ( event == NUI_HAND_EVENT_TYPE_GRIPRELEASE )
+                {
+                    cout << "Grip Release ";
+                }
+                else
+                {
+                    cout << "No Event!    ";
+                }
+                cout << "    HandType=";
+                if ( type == NUI_HAND_TYPE_NONE )
+                    cout << "No    Hand";
+                else if ( type == NUI_HAND_TYPE_LEFT )
+                    cout << "Left  Hand";
+                else if ( type == NUI_HAND_TYPE_RIGHT )
+                    cout << "Right Hand";
+                cout << endl;
+                //////NUI_HANDPOINTER_STATE
+                cout << "STATE_TRACKED =      ";
+                if ( ( state&&NUI_HANDPOINTER_STATE_TRACKED ) == 1 )
+                    cout << "   TRACKED!";
+                else
+                    cout << " No TRACKED";
+                cout << endl;
+                cout << "STATE_ACTIVE =       ";
+                if ( ( state&&NUI_HANDPOINTER_STATE_ACTIVE ) == 1 )
+                    cout << "     ACTIVE";
+                else
+                    cout << " Not ACTIVE";
+                cout << endl;
+                cout << "STATE_INTERACTIVE =  ";
+                if ( ( state&&NUI_HANDPOINTER_STATE_INTERACTIVE ) == 1 )
+                    cout << "    INTERACTIVE!";
+                else
+                    cout << " Not INTERACTIVE";
+                cout << endl;
+                cout << "STATE_PRESSED =      ";
+                if ( ( state&&NUI_HANDPOINTER_STATE_PRESSED ) == 1 )
+                    cout << "    PRESSED!";
+                else
+                    cout << " Not PRESSED";
+                cout << endl;
+                cout << "PRIMARY_FOR_USER =   ";
+                if ( ( state&&NUI_HANDPOINTER_STATE_PRIMARY_FOR_USER ) == 1 )
+                    cout << "    PRIMARY!";
+                else
+                    cout << " Not PRIMARY";
+                cout << endl;
+                //	system("\f");
+            }
+        }
+    }
+    return 0;
 }
 
 void Kinect::inicializar()
@@ -321,13 +459,22 @@ bool Kinect::inicializarKinect()
     if ( NULL != sensor )
     {
         // Initialize the Kinect and specify that we'll be using skeleton
-        hr = sensor->NuiInitialize ( NUI_INITIALIZE_FLAG_USES_SKELETON );
+        hr = sensor->NuiInitialize ( NUI_INITIALIZE_FLAG_USES_DEPTH_AND_PLAYER_INDEX | NUI_INITIALIZE_FLAG_USES_SKELETON );
         if ( SUCCEEDED ( hr ) )
         {
             // Create an event that will be signaled when skeleton data is available
             m_hNextSkeletonEvent = CreateEventW ( NULL, TRUE, FALSE, NULL );
             // Open a skeleton stream to receive skeleton data
             hr = sensor->NuiSkeletonTrackingEnable ( m_hNextSkeletonEvent, 0 );
+            m_hNextDepthFrameEvent=CreateEventW ( NULL, TRUE, FALSE, NULL );
+            m_pDepthStreamHandle = NULL;
+            hr = sensor->NuiImageStreamOpen ( NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX, NUI_IMAGE_RESOLUTION_640x480, 0, 2, m_hNextDepthFrameEvent,
+                                              &m_pDepthStreamHandle );
+            if ( FAILED ( hr ) )
+            {
+                cout << "Could not open depth" << endl;
+                return hr;
+            }
             //create event interaction
             m_hNextInteractionEvent = CreateEventW ( NULL, TRUE, FALSE, NULL );
             hr = NuiCreateInteractionStream ( sensor, ( INuiInteractionClient * ) &m_nuiIClient, &m_nuiIStream );

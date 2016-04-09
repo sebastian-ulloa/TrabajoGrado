@@ -9,8 +9,7 @@
 #include "ManejadorGestos.h"
 #include <vector>
 #include <KinectInteraction.h>
-
-
+using namespace std;
 
 #ifndef _GESTO_
 #define _GESTO_
@@ -94,9 +93,13 @@ private:
     ineractionClient m_nuiIClient;
     INuiInteractionStream *m_nuiIStream;
     HANDLE m_hNextInteractionEvent;
+    HANDLE m_hNextDepthFrameEvent;
+    HANDLE m_pDepthStreamHandle;
     void deformar();
+    void getDepthData();
     bool inicializarKinect();
     void deteccion();
+    int ShowInteraction();
     void procesarGestos();
     float distancia ( float x1, float x2, float y1, float y2 );
     std::vector<ManejadorGestos> valoresGestos;
