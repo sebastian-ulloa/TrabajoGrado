@@ -11,20 +11,23 @@
 #include  <vtkPolyDataMapper.h>
 #include  <vtkProperty.h>
 #include  <vtkCamera.h>
-class Visualizacion {
+class Visualizacion
+{
 public:
-	Visualizacion();
-	~Visualizacion();
-	void mostrarObjetoInicial(vtkPolyData* polydata);
-	void actualizarVentana(vtkPolyData* p);
-	void esferaprueba();
+    Visualizacion();
+    ~Visualizacion();
+    void mostrarObjetoInicial ( vtkPolyData* polydata );
+    void actualizarVentana ( vtkPolyData* p );
+    void esferaprueba();
+    void zoom ( bool accion );
+    void moverHorizontal ( bool direccion );
 private:
-	vtkPolyData* polydata;
-	vtkSmartPointer<vtkRenderer> renderer;
-	vtkSmartPointer<vtkPolyDataMapper> mapper;
-	vtkSmartPointer<vtkActor> actor;
-	vtkSmartPointer<vtkRenderWindow> ventana;
-	vtkSmartPointer<vtkRenderWindowInteractor> interactor;
-	vtkSmartPointer<vtkCamera> camera ;
+    vtkPolyData* polydata;
+    vtkSmartPointer<vtkRenderer> renderer;
+    vtkSmartPointer<vtkPolyDataMapper> mapper;
+    vtkSmartPointer<vtkActor> actor;
+    vtkSmartPointer<vtkRenderWindow> ventana;
+    vtkSmartPointer<vtkRenderWindowInteractor> interactor;
+    vtkSmartPointer<vtkCamera> camera ;
 };
 
