@@ -263,52 +263,41 @@ void Kinect::asignarValoresGestos()
 
 void Kinect::deteccion()
 {
+    if ( WAIT_OBJECT_0 == WaitForSingleObject ( m_hNextDepthFrameEvent, 0 ) )
+    {
+        getDepthData();
+    }
+    if ( WAIT_OBJECT_0 == WaitForSingleObject ( m_hNextSkeletonEvent, 0 ) )
+    {
+        procesarGestos();
+    }
     if ( WAIT_OBJECT_0 == WaitForSingleObject ( m_hNextInteractionEvent, 0 ) )
     {
         cout << "entro ";
         ShowInteraction();
     }
-    if ( WAIT_OBJECT_0 == WaitForSingleObject ( m_hNextSkeletonEvent, 0 ) )
-    {
-        // procesarGestos();
-    }
-    if (  WAIT_OBJECT_0 == WaitForSingleObject ( m_hNextDepthFrameEvent, 0 ) )
-    {
-        getDepthData();
-    }
 }
 
 void Kinect::getDepthData()
 {
-    HRESULT hr;
-    NUI_IMAGE_FRAME imageFrame;
-    // GET DEPTH FRAME
-    hr = sensor->NuiImageStreamGetNextFrame ( m_pDepthStreamHandle, 0, &imageFrame );
-    if ( FAILED ( hr ) )
-    {
-        return;
-    }
-    BOOL nearMode;
-    INuiFrameTexture* pTexture;
-    hr = sensor->NuiImageFrameGetDepthImagePixelFrameTexture (
-             m_pDepthStreamHandle, &imageFrame, &nearMode, &pTexture );
-    if ( FAILED ( hr ) )
-    {
-        sensor->NuiImageStreamReleaseFrame ( m_pDepthStreamHandle, &imageFrame );
-        return;
-    }
+    NUI_IMAGE_FRAME pImageFrame;
+    INuiFrameTexture* pDepthImagePixelFrame;
+    HRESULT hr = sensor->NuiImageStreamGetNextFrame ( m_pDepthStreamHandle, 0, &pImageFrame );
+    BOOL nearMode = TRUE;
+    sensor->NuiImageFrameGetDepthImagePixelFrameTexture ( m_pDepthStreamHandle, &pImageFrame, &nearMode, &pDepthImagePixelFrame );
+    INuiFrameTexture * pTexture = pDepthImagePixelFrame;
     NUI_LOCKED_RECT LockedRect;
-    // LOCK THE FRAME SO THE KINECT KNOWS NOT TO MODIFY IT
     pTexture->LockRect ( 0, &LockedRect, NULL, 0 );
-    // TEST IF THE RECEIVED DATA IS VALID
     if ( LockedRect.Pitch != 0 )
     {
-        //HAND INTERACTION
-        m_nuiIStream->ProcessDepth ( LockedRect.size, LockedRect.pBits, imageFrame.liTimeStamp );
+        HRESULT hr = m_nuiIStream->ProcessDepth ( LockedRect.size, PBYTE ( LockedRect.pBits ), pImageFrame.liTimeStamp );
+        if ( FAILED ( hr ) )
+        {
+            OutputDebugStringW ( L"Process Depth failed\n" );
+        }
     }
     pTexture->UnlockRect ( 0 );
-    pTexture->Release();
-    sensor->NuiImageStreamReleaseFrame ( m_pDepthStreamHandle, &imageFrame );
+    sensor->NuiImageStreamReleaseFrame ( m_pDepthStreamHandle, &pImageFrame );
 }
 
 int Kinect::ShowInteraction()
@@ -459,7 +448,9 @@ bool Kinect::inicializarKinect()
     if ( NULL != sensor )
     {
         // Initialize the Kinect and specify that we'll be using skeleton
-        hr = sensor->NuiInitialize ( NUI_INITIALIZE_FLAG_USES_DEPTH_AND_PLAYER_INDEX | NUI_INITIALIZE_FLAG_USES_SKELETON );
+        hr = sensor->NuiInitialize ( NUI_INITIALIZE_FLAG_USES_DEPTH_AND_PLAYER_INDEX
+                                     | NUI_INITIALIZE_FLAG_USES_COLOR |
+                                     NUI_INITIALIZE_FLAG_USES_SKELETON );
         if ( SUCCEEDED ( hr ) )
         {
             // Create an event that will be signaled when skeleton data is available
