@@ -63,7 +63,7 @@ void Visualizacion::zoom ( bool accion )
     double factor = 0.8;
     if ( accion )
     {
-        factor = 1.2;
+        factor = 1.25;
     }
     renderer->GetActiveCamera()->Zoom ( factor );
     ventana->Render();
@@ -71,11 +71,42 @@ void Visualizacion::zoom ( bool accion )
 
 void Visualizacion::moverHorizontal ( bool direccion )
 {
-    double factor = -8;
+    double factor = -6.5;
     if ( direccion )
     {
-        factor = 8;
+        factor = 6.5;
     }
     renderer->GetActiveCamera()->Yaw ( factor );
+    ventana->Render();
+}
+
+void Visualizacion::moverVertical ( bool direccion )
+{
+    double factor = 6.5;
+    if ( direccion )
+    {
+        factor = -6.5;
+    }
+    renderer->GetActiveCamera()->Pitch ( factor );
+    ventana->Render();
+}
+void Visualizacion::rotarVertical ( bool direccion )
+{
+    double factor = 45;
+    if ( direccion )
+    {
+        factor = -45;
+    }
+    renderer->GetActiveCamera()->Azimuth ( factor );
+    ventana->Render();
+}
+void Visualizacion::rotarHorizontal ( bool direccion )
+{
+    double factor = 45;
+    if ( direccion )
+    {
+        factor = -45;
+    }
+    renderer->GetActiveCamera()->Roll ( factor );
     ventana->Render();
 }

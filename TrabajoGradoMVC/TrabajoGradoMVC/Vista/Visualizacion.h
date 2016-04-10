@@ -21,6 +21,9 @@ public:
     void esferaprueba();
     void zoom ( bool accion );
     void moverHorizontal ( bool direccion );
+    void moverVertical ( bool direccion );
+    void rotarVertical ( bool direccion );
+    void rotarHorizontal ( bool direccion );
 private:
     vtkPolyData* polydata;
     vtkSmartPointer<vtkRenderer> renderer;
