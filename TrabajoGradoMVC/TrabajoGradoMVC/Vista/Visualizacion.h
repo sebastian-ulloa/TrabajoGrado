@@ -11,6 +11,9 @@
 #include  <vtkPolyDataMapper.h>
 #include  <vtkProperty.h>
 #include  <vtkCamera.h>
+#include <vtkSphereSource.h>
+#include <vtkTransform.h>
+#include <vtkKdTree.h>
 class Visualizacion
 {
 public:
@@ -24,11 +27,17 @@ public:
     void moverVertical ( bool direccion );
     void rotarVertical ( bool direccion );
     void rotarHorizontal ( bool direccion );
+    void activarDeformacion ( bool activar );
+    void ubicacionEsferaDeformacion ( double x, double y );
+    double* puntoCercano ( double x, double y );
 private:
     vtkPolyData* polydata;
+    vtkSmartPointer<vtkSphereSource> esferaDeformar;
     vtkSmartPointer<vtkRenderer> renderer;
     vtkSmartPointer<vtkPolyDataMapper> mapper;
     vtkSmartPointer<vtkActor> actor;
+    vtkSmartPointer<vtkPolyDataMapper> mapperEsfera;
+    vtkSmartPointer<vtkActor> actorEsfera;
     vtkSmartPointer<vtkRenderWindow> ventana;
     vtkSmartPointer<vtkRenderWindowInteractor> interactor;
     vtkSmartPointer<vtkCamera> camera;

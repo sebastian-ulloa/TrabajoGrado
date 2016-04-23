@@ -63,6 +63,7 @@ private:
     std::vector<ManejadorGestos> valoresGestos;
     void asignarValoresGestos();
     void reiniciarGestos();
+    void convertirCoordenadas ( double x, double y );
 
 };
 

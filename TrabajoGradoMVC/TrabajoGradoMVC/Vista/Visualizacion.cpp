@@ -2,13 +2,17 @@
 
 Visualizacion::Visualizacion()
 {
+    esferaDeformar = vtkSmartPointer<vtkSphereSource>::New();
     actor = vtkSmartPointer<vtkActor>::New();
     mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    actorEsfera = vtkSmartPointer<vtkActor>::New();
+    mapperEsfera = vtkSmartPointer<vtkPolyDataMapper>::New();
     ventana = vtkSmartPointer<vtkRenderWindow>::New();
     camera = vtkSmartPointer<vtkCamera>::New();
     renderer = vtkSmartPointer<vtkRenderer>::New();
+    esferaDeformar->SetRadius ( 1 );
     camera->SetPosition ( 0, 0, 40 );
-    ventana->SetSize ( 500, 500 );
+    ventana->SetSize ( 1366, 670 );
     interactor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
     interactor->SetRenderWindow ( ventana );
 }
@@ -24,7 +28,12 @@ void Visualizacion::mostrarObjetoInicial ( vtkPolyData * polydata )
     mapper->SetInputData ( polydata );
     actor->SetMapper ( mapper );
     renderer->AddActor ( actor );
+    mapperEsfera->SetInputConnection ( esferaDeformar->GetOutputPort() );
+    actorEsfera->SetMapper ( mapperEsfera );
+    actorEsfera->GetProperty()->SetColor ( 0,0.50196,1 );
+    renderer->AddActor ( actorEsfera );
     ventana->AddRenderer ( renderer );
+    actorEsfera->VisibilityOff();
     ventana->Render();
 }
 
@@ -71,23 +80,33 @@ void Visualizacion::zoom ( bool accion )
 
 void Visualizacion::moverHorizontal ( bool direccion )
 {
-    double factor = -6.5;
+    double posicion[3];
+    actor->GetPosition ( posicion );
     if ( direccion )
     {
-        factor = 6.5;
+        posicion[0] = posicion[0] + 2;
     }
-    renderer->GetActiveCamera()->Yaw ( factor );
+    else
+    {
+        posicion[0] = posicion[0] - 2;
+    }
+    actor->SetPosition ( posicion );
     ventana->Render();
 }
 
 void Visualizacion::moverVertical ( bool direccion )
 {
-    double factor = 6.5;
+    double posicion[3];
+    actor->GetPosition ( posicion );
     if ( direccion )
     {
-        factor = -6.5;
+        posicion[1] = posicion[1] + 2;
     }
-    renderer->GetActiveCamera()->Pitch ( factor );
+    else
+    {
+        posicion[1] = posicion[1] - 2;
+    }
+    actor->SetPosition ( posicion );
     ventana->Render();
 }
 void Visualizacion::rotarVertical ( bool direccion )
@@ -97,7 +116,7 @@ void Visualizacion::rotarVertical ( bool direccion )
     {
         factor = -45;
     }
-    renderer->GetActiveCamera()->Azimuth ( factor );
+    actor->RotateY ( factor );
     ventana->Render();
 }
 void Visualizacion::rotarHorizontal ( bool direccion )
@@ -107,6 +126,36 @@ void Visualizacion::rotarHorizontal ( bool direccion )
     {
         factor = -45;
     }
-    renderer->GetActiveCamera()->Roll ( factor );
+    actor->RotateX ( factor );
     ventana->Render();
+}
+
+void Visualizacion::activarDeformacion ( bool activar )
+{
+    if ( activar )
+    {
+        actorEsfera->VisibilityOn();
+    }
+    else
+    {
+        actorEsfera->VisibilityOff();
+    }
+    ventana->Render();
+}
+
+void Visualizacion::ubicacionEsferaDeformacion ( double x, double y )
+{
+    esferaDeformar->SetCenter ( x, y, 0 );
+    ventana->Render();
+}
+
+double* Visualizacion::puntoCercano ( double x, double y )
+{
+    double d[3] = { x,y,0 };
+    double dist;
+    vtkSmartPointer<vtkKdTree> kdtree =
+        vtkSmartPointer<vtkKdTree>::New();
+    kdtree->BuildLocatorFromPoints ( polydata ) ;
+    vtkIdType id =kdtree->FindClosestPointWithinRadius ( 1.0, d, dist );
+    return polydata->GetPoint ( id );
 }

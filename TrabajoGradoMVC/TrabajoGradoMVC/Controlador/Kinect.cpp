@@ -264,6 +264,11 @@ void Kinect::procesarGestos()
                         }
                     }
                 }
+                if ( gesto == MANO_DERECHA_ARRIBA )
+                {
+                    visualizacion->activarDeformacion ( true );
+                    convertirCoordenadas ( manoDerecha.x, manoDerecha.y );
+                }
                 if ( manoDerecha.y < 0 && manoIzquierda.y < 0 )
                 {
                     std::cout << "Termino gesto" << std::endl;
@@ -395,7 +400,16 @@ bool Kinect::inicializarKinect()
     }
     return true;
 }
+
 float Kinect::redondear ( float n )
 {
     return roundf ( n * 100 ) / 100;
+}
+
+void Kinect::convertirCoordenadas ( double x, double y )
+{
+    x = ( ( x ) * 22 ) / 1;
+    y = ( ( y ) * 11 ) / 1;
+    visualizacion->ubicacionEsferaDeformacion ( x, y );
+    visualizacion->actualizarVentana ( deformacion->deformar ( visualizacion->puntoCercano ( x, y ) , true ) );
 }
