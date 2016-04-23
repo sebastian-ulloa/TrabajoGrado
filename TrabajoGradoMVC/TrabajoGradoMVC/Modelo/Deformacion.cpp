@@ -68,13 +68,41 @@ vtkPolyData * Deformacion::deformar ( double * punto , bool repeler )
     PointType p1=  esferaSimplex->GetPoint ( idPunto );
     if ( repeler )
     {
-        p1[0] -=1;
-        p1[1] -=1;
+        if ( p1[0]>=0 )
+        {
+            p1[0] -= 1;
+        }
+        else
+        {
+            p1[0] += 1;
+        }
+        if ( p1[1] >= 0 )
+        {
+            p1[1] -= 1;
+        }
+        else
+        {
+            p1[1] += 1;
+        }
     }
     else
     {
-        p1[0] += 1;
-        p1[1] += 1;
+        if ( p1[0] < 0 )
+        {
+            p1[0] -= 1;
+        }
+        else
+        {
+            p1[0] += 1;
+        }
+        if ( p1[1] < 0 )
+        {
+            p1[1] -= 1;
+        }
+        else
+        {
+            p1[1] += 1;
+        }
     }
     esferaSimplex->SetPoint ( idPunto, p1 );
     return conversor.meshToPolydata ( simplexATriangular ( esferaSimplex ) );

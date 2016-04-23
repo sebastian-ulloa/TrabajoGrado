@@ -31,6 +31,8 @@ public:
     void ubicacionEsferaDeformacion ( double x, double y );
     double* puntoCercano ( double x, double y );
 private:
+    int z[8];
+    int zActual;
     vtkPolyData* polydata;
     vtkSmartPointer<vtkSphereSource> esferaDeformar;
     vtkSmartPointer<vtkRenderer> renderer;

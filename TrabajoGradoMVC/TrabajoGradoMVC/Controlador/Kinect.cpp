@@ -411,5 +411,9 @@ void Kinect::convertirCoordenadas ( double x, double y )
     x = ( ( x ) * 22 ) / 1;
     y = ( ( y ) * 11 ) / 1;
     visualizacion->ubicacionEsferaDeformacion ( x, y );
-    visualizacion->actualizarVentana ( deformacion->deformar ( visualizacion->puntoCercano ( x, y ) , true ) );
+    double *d = visualizacion->puntoCercano ( x, y );
+    if ( d != NULL )
+    {
+        visualizacion->actualizarVentana ( deformacion->deformar ( d, true ) );
+    }
 }

@@ -15,6 +15,12 @@ Visualizacion::Visualizacion()
     ventana->SetSize ( 1366, 670 );
     interactor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
     interactor->SetRenderWindow ( ventana );
+    int secuenciaZ[8] = { 3,4.8 ,3,-0.9,-3,-4.8,-3,0.9 };
+    zActual = 0;
+    for ( int i = 0; i < 8; i++ )
+    {
+        z[i] = secuenciaZ[i];
+    }
 }
 
 Visualizacion::~Visualizacion()
@@ -84,11 +90,11 @@ void Visualizacion::moverHorizontal ( bool direccion )
     actor->GetPosition ( posicion );
     if ( direccion )
     {
-        posicion[0] = posicion[0] + 2;
+        posicion[0] = posicion[0] + 4;
     }
     else
     {
-        posicion[0] = posicion[0] - 2;
+        posicion[0] = posicion[0] - 4;
     }
     actor->SetPosition ( posicion );
     ventana->Render();
@@ -100,11 +106,11 @@ void Visualizacion::moverVertical ( bool direccion )
     actor->GetPosition ( posicion );
     if ( direccion )
     {
-        posicion[1] = posicion[1] + 2;
+        posicion[1] = posicion[1] + 4;
     }
     else
     {
-        posicion[1] = posicion[1] - 2;
+        posicion[1] = posicion[1] -4;
     }
     actor->SetPosition ( posicion );
     ventana->Render();
@@ -114,19 +120,24 @@ void Visualizacion::rotarVertical ( bool direccion )
     double factor = 45;
     if ( direccion )
     {
-        factor = -45;
+        factor *= -1;
     }
-    actor->RotateY ( factor );
+    actor->RotateZ ( factor );
     ventana->Render();
 }
 void Visualizacion::rotarHorizontal ( bool direccion )
 {
-    double factor = 45;
+    double factor = -45;
     if ( direccion )
     {
-        factor = -45;
+        factor*= -1;
+        zActual != 7 ? zActual++ : zActual = 0;
     }
-    actor->RotateX ( factor );
+    else
+    {
+        zActual != 0 ? zActual-- : zActual = 7;
+    }
+    actor->RotateY ( factor );
     ventana->Render();
 }
 
@@ -145,17 +156,28 @@ void Visualizacion::activarDeformacion ( bool activar )
 
 void Visualizacion::ubicacionEsferaDeformacion ( double x, double y )
 {
-    esferaDeformar->SetCenter ( x, y, 0 );
+    actorEsfera->SetPosition ( x, y, 3 );
     ventana->Render();
 }
 
 double* Visualizacion::puntoCercano ( double x, double y )
 {
-    double d[3] = { x,y,0 };
+    if ( zActual >= 1 && zActual < 5 )
+    {
+        x *= -1;
+    }
+    double d[3] = { x,y,z[zActual] };
     double dist;
     vtkSmartPointer<vtkKdTree> kdtree =
         vtkSmartPointer<vtkKdTree>::New();
     kdtree->BuildLocatorFromPoints ( polydata ) ;
-    vtkIdType id =kdtree->FindClosestPointWithinRadius ( 1.0, d, dist );
-    return polydata->GetPoint ( id );
+    vtkIdType id =kdtree->FindClosestPoint ( d, dist );
+    if ( dist<= 1.0 )
+    {
+        cout<<dist<<" "<< polydata->GetPoint ( id ) [0]<<" "<<polydata->GetPoint ( id ) [1]<<" "<< polydata->GetPoint ( id ) [2];
+        cout << endl;
+        cout << x << "_" << y << endl;
+        return polydata->GetPoint ( id );
+    }
+    return NULL;
 }
