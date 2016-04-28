@@ -7,7 +7,6 @@ Kinect::Kinect()
     visualizacion = new Visualizacion();
     gesto = NO_GESTO;
     empezarGesto = 0;
-    identificador = false;
 }
 
 
@@ -44,8 +43,8 @@ void Kinect::procesarGestos()
                     {
                         valoresGestos[MANOS_ARRIBA].reiniciarValores();
                         std::cout << "Empezo gesto manos arriba" << std::endl;
+						visualizacion->textoGesto("Manos arriba");
                         gesto = MANOS_ARRIBA;
-                        identificador = true;
                     }
                 }
                 else
@@ -58,6 +57,7 @@ void Kinect::procesarGestos()
                         {
                             valoresGestos[MANO_DERECHA_ARRIBA].reiniciarValores();
                             std::cout << "Empezo gesto mano derecha" << std::endl;
+							visualizacion->textoGesto("Mano derecha arriba");
                             gesto = MANO_DERECHA_ARRIBA;
                         }
                     }
@@ -69,6 +69,7 @@ void Kinect::procesarGestos()
                         {
                             valoresGestos[MANO_IZQUIERDA_ARRIBA].reiniciarValores();
                             std::cout << "Empezo gesto mano izquierda" << std::endl;
+							visualizacion->textoGesto("Mano iquierda arriba");
                             gesto = MANO_IZQUIERDA_ARRIBA;
                         }
                     }
@@ -321,7 +322,7 @@ void Kinect::reiniciarGestos()
     {
         valoresGestos[i].reiniciarValores();
     }
-    identificador = true;
+	visualizacion->textoGesto("");
 }
 
 void Kinect::deteccion()
@@ -362,40 +363,33 @@ bool Kinect::inicializarKinect()
     {
         return false;
     }
-    // Look at each Kinect sensor
     for ( int i = 0; i < iSensorCount; ++i )
     {
-        // Create the sensor so we can check status, if we can't create it, move on to the next
         hr = NuiCreateSensorByIndex ( i, &pNuiSensor );
         if ( FAILED ( hr ) )
         {
             continue;
         }
-        // Get the status of the sensor, and if connected, then we can initialize it
         hr = pNuiSensor->NuiStatus();
         if ( S_OK == hr )
         {
             sensor = pNuiSensor;
             break;
         }
-        // This sensor wasn't OK, so release it since we're not using it
         pNuiSensor->Release();
     }
     if ( NULL != sensor )
     {
-        // Initialize the Kinect and specify that we'll be using skeleton
         hr = sensor->NuiInitialize ( NUI_INITIALIZE_FLAG_USES_SKELETON );
         if ( SUCCEEDED ( hr ) )
         {
-            // Create an event that will be signaled when skeleton data is available
             m_hNextSkeletonEvent = CreateEventW ( NULL, TRUE, FALSE, NULL );
-            // Open a skeleton stream to receive skeleton data
             hr = sensor->NuiSkeletonTrackingEnable ( m_hNextSkeletonEvent, 0 );
         }
     }
     if ( NULL == sensor || FAILED ( hr ) )
     {
-        std::cout << "No ready Kinect found!";
+        std::cout << "Kinect no conectado";
         return false;
     }
     return true;

@@ -91,8 +91,6 @@ vtkPolyData * ITKaVTK::meshToPolydata ( TMallaTriangular* mesh )
             zmin = pnt[2];
         }
     }
-    cout << "ZMax = " << zmax;
-    cout << "\nZMin= " << zmin<<endl;
     newPolyData->SetPoints ( points );
     points->Delete();
     //Copy all cells into the vtkPolyData structure

@@ -50,7 +50,6 @@ private:
     HANDLE m_hNextSkeletonEvent;
     Deformacion *deformacion;
     Visualizacion *visualizacion;
-    bool identificador;
     float distanciaInicial;
     float inicialDerechaY;
     float inicialIzquierdaY;
