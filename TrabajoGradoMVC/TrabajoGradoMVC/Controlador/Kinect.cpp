@@ -7,7 +7,7 @@ Kinect::Kinect()
     visualizacion = new Visualizacion();
     gesto = NO_GESTO;
     empezarGesto = 0;
-    identificador = false;
+    repeler = true;
 }
 
 
@@ -34,6 +34,7 @@ void Kinect::procesarGestos()
             Vector4 manoIzquierda = skeletonFrame.SkeletonData[i].SkeletonPositions[NUI_SKELETON_POSITION_HAND_LEFT];
             Vector4 codoIzquierdo = skeletonFrame.SkeletonData[i].SkeletonPositions[NUI_SKELETON_POSITION_ELBOW_LEFT];
             Vector4 hombroCentro = skeletonFrame.SkeletonData[i].SkeletonPositions[NUI_SKELETON_POSITION_SHOULDER_CENTER];
+            Vector4 cadera = skeletonFrame.SkeletonData[i].SkeletonPositions[NUI_SKELETON_POSITION_HIP_LEFT];
             if ( gesto == NO_GESTO )
             {
                 if ( ( manoDerecha.y >= codoDerecho.y ) && ( manoIzquierda.y >= codoIzquierdo.y )
@@ -44,8 +45,8 @@ void Kinect::procesarGestos()
                     {
                         valoresGestos[MANOS_ARRIBA].reiniciarValores();
                         std::cout << "Empezo gesto manos arriba" << std::endl;
+                        visualizacion->textoGesto ( "Gesto: Manos arriba" );
                         gesto = MANOS_ARRIBA;
-                        identificador = true;
                     }
                 }
                 else
@@ -58,6 +59,7 @@ void Kinect::procesarGestos()
                         {
                             valoresGestos[MANO_DERECHA_ARRIBA].reiniciarValores();
                             std::cout << "Empezo gesto mano derecha" << std::endl;
+                            visualizacion->textoGesto ( "Gesto: Mano derecha arriba" );
                             gesto = MANO_DERECHA_ARRIBA;
                         }
                     }
@@ -69,6 +71,7 @@ void Kinect::procesarGestos()
                         {
                             valoresGestos[MANO_IZQUIERDA_ARRIBA].reiniciarValores();
                             std::cout << "Empezo gesto mano izquierda" << std::endl;
+                            visualizacion->textoGesto ( "Gesto: Mano iquierda arriba" );
                             gesto = MANO_IZQUIERDA_ARRIBA;
                         }
                     }
@@ -82,6 +85,7 @@ void Kinect::procesarGestos()
                     {
                         std::cout << "Termino gesto" << std::endl;
                         reiniciarGestos();
+                        visualizacion->textoGesto ( "" );
                         gesto = NO_GESTO;
                     }
                     else
@@ -89,7 +93,7 @@ void Kinect::procesarGestos()
                         /*---------------------------------------------------------------------------------------------------------*/
                         /*MOVER DERECHA*/
                         if ( valoresGestos[MOVER_DERECHA].getValorAnterior() < redondear ( manoDerecha.x )
-                                &&  valoresGestos[MOVER_DERECHA].getValorAnterior2() < redondear ( manoIzquierda.x )
+                                && valoresGestos[MOVER_DERECHA].getValorAnterior2() < redondear ( manoIzquierda.x )
                                 && valoresGestos[MOVER_DERECHA].getGestoProgreso() <= valoresGestos[MOVER_DERECHA].getGestoCompleto()
                            )
                         {
@@ -105,7 +109,7 @@ void Kinect::procesarGestos()
                         /*---------------------------------------------------------------------------------------------------------*/
                         /*MOVER IZQUIERDA*/
                         if ( valoresGestos[MOVER_IZQUIERDA].getValorAnterior() > redondear ( manoDerecha.x )
-                                &&  valoresGestos[MOVER_IZQUIERDA].getValorAnterior2() > redondear ( manoIzquierda.x )
+                                && valoresGestos[MOVER_IZQUIERDA].getValorAnterior2() > redondear ( manoIzquierda.x )
                                 && valoresGestos[MOVER_IZQUIERDA].getGestoProgreso() <= valoresGestos[MOVER_IZQUIERDA].getGestoCompleto()
                            )
                         {
@@ -121,7 +125,7 @@ void Kinect::procesarGestos()
                         /*---------------------------------------------------------------------------------------------------------*/
                         /*MOVER ARRIBA*/
                         if ( valoresGestos[MOVER_ARRIBA].getValorAnterior() < redondear ( manoDerecha.y )
-                                &&  valoresGestos[MOVER_ARRIBA].getValorAnterior2() < redondear ( manoIzquierda.y )
+                                && valoresGestos[MOVER_ARRIBA].getValorAnterior2() < redondear ( manoIzquierda.y )
                                 && valoresGestos[MOVER_ARRIBA].getGestoProgreso() <= valoresGestos[MOVER_ARRIBA].getGestoCompleto()
                            )
                         {
@@ -137,7 +141,7 @@ void Kinect::procesarGestos()
                         /*---------------------------------------------------------------------------------------------------------*/
                         /*MOVER ABAJO*/
                         if ( valoresGestos[MOVER_ABAJO].getValorAnterior() > redondear ( manoDerecha.y )
-                                &&  valoresGestos[MOVER_ABAJO].getValorAnterior2() > redondear ( manoIzquierda.y )
+                                && valoresGestos[MOVER_ABAJO].getValorAnterior2() > redondear ( manoIzquierda.y )
                                 && valoresGestos[MOVER_ABAJO].getGestoProgreso() <= valoresGestos[MOVER_ABAJO].getGestoCompleto()
                            )
                         {
@@ -159,6 +163,7 @@ void Kinect::procesarGestos()
                         if ( hombroCentro.z - manoDerecha.z < 0.3 && hombroCentro.z - manoIzquierda.z < 0.3 )
                         {
                             std::cout << "Termino gesto" << std::endl;
+                            visualizacion->textoGesto ( "" );
                             reiniciarGestos();
                             gesto = NO_GESTO;
                         }
@@ -201,7 +206,9 @@ void Kinect::procesarGestos()
                         if ( hombroCentro.z - manoIzquierda.z < 0.3 )
                         {
                             std::cout << "Termino gesto" << std::endl;
+                            visualizacion->textoGesto ( "" );
                             reiniciarGestos();
+                            gesto = NO_GESTO;
                         }
                         else
                         {
@@ -257,7 +264,7 @@ void Kinect::procesarGestos()
                                 if ( valoresGestos[ROTAR_ABAJO].getGestoProgreso() == valoresGestos[ROTAR_ABAJO].getGestoCompleto() )
                                 {
                                     std::cout << "rotar abajo\n";
-                                    visualizacion->rotarVertical ( true );
+                                    visualizacion->rotarVertical ( false );
                                     reiniciarGestos();
                                 }
                             }
@@ -267,12 +274,39 @@ void Kinect::procesarGestos()
                 if ( gesto == MANO_DERECHA_ARRIBA )
                 {
                     visualizacion->activarDeformacion ( true );
+                    if ( manoIzquierda.y > codoIzquierdo.y )
+                    {
+                        if ( repeler )
+                        {
+                            repeler = false;
+                            visualizacion->cambioDeformacion ( repeler );
+                        }
+                    }
+                    else
+                    {
+                        if ( !repeler )
+                        {
+                            repeler = true;
+                            visualizacion->cambioDeformacion ( repeler );
+                        }
+                    }
+                    if ( hombroCentro.z - manoDerecha.z < 0.25 )
+                    {
+                        std::cout << "Termino gesto" << std::endl;
+                        visualizacion->textoGesto ( "" );
+                        visualizacion->activarDeformacion ( false );
+                        reiniciarGestos();
+                        gesto = NO_GESTO;
+                    }
                     convertirCoordenadas ( manoDerecha.x, manoDerecha.y );
                 }
-                if ( manoDerecha.y < 0 && manoIzquierda.y < 0 )
+                if ( manoDerecha.y < cadera.y && manoIzquierda.y < cadera.y )
                 {
                     std::cout << "Termino gesto" << std::endl;
                     gesto = NO_GESTO;
+                    visualizacion->textoGesto ( "" );
+                    visualizacion->activarDeformacion ( false );
+                    reiniciarGestos();
                 }
             }
             /*std::cout << "---------------------------------------------" << std::endl;
@@ -307,12 +341,12 @@ void Kinect::asignarValoresGestos()
     valoresGestos[ROTAR_ARRIBA].asignarValores ( -2, 10 );
     valoresGestos[ROTAR_ABAJO].asignarValores ( 2, 10 );
     valoresGestos[MANOS_ARRIBA].asignarValores ( 0, 5 );
-    valoresGestos[ZOOM_IN].asignarValores ( 0, 8 );
-    valoresGestos[ZOOM_OUT].asignarValores ( 10, 8 );
+    valoresGestos[ZOOM_IN].asignarValores ( 0, 9 );
+    valoresGestos[ZOOM_OUT].asignarValores ( 10, 9 );
     valoresGestos[MOVER_DERECHA].asignarValores ( -2, -2, 7 );
     valoresGestos[MOVER_IZQUIERDA].asignarValores ( 2, 2, 7 );
-    valoresGestos[MOVER_ARRIBA].asignarValores ( 0, 0, 7 ); //TODO
-    valoresGestos[MOVER_ABAJO].asignarValores ( 4, 4, 7 ); //TODO
+    valoresGestos[MOVER_ARRIBA].asignarValores ( 0, 0, 7 );
+    valoresGestos[MOVER_ABAJO].asignarValores ( 4, 4, 7 );
 }
 
 void Kinect::reiniciarGestos()
@@ -321,7 +355,6 @@ void Kinect::reiniciarGestos()
     {
         valoresGestos[i].reiniciarValores();
     }
-    identificador = true;
 }
 
 void Kinect::deteccion()
@@ -362,40 +395,33 @@ bool Kinect::inicializarKinect()
     {
         return false;
     }
-    // Look at each Kinect sensor
     for ( int i = 0; i < iSensorCount; ++i )
     {
-        // Create the sensor so we can check status, if we can't create it, move on to the next
         hr = NuiCreateSensorByIndex ( i, &pNuiSensor );
         if ( FAILED ( hr ) )
         {
             continue;
         }
-        // Get the status of the sensor, and if connected, then we can initialize it
         hr = pNuiSensor->NuiStatus();
         if ( S_OK == hr )
         {
             sensor = pNuiSensor;
             break;
         }
-        // This sensor wasn't OK, so release it since we're not using it
         pNuiSensor->Release();
     }
     if ( NULL != sensor )
     {
-        // Initialize the Kinect and specify that we'll be using skeleton
         hr = sensor->NuiInitialize ( NUI_INITIALIZE_FLAG_USES_SKELETON );
         if ( SUCCEEDED ( hr ) )
         {
-            // Create an event that will be signaled when skeleton data is available
             m_hNextSkeletonEvent = CreateEventW ( NULL, TRUE, FALSE, NULL );
-            // Open a skeleton stream to receive skeleton data
             hr = sensor->NuiSkeletonTrackingEnable ( m_hNextSkeletonEvent, 0 );
         }
     }
     if ( NULL == sensor || FAILED ( hr ) )
     {
-        std::cout << "No ready Kinect found!";
+        std::cout << "Kinect no conectado";
         return false;
     }
     return true;
@@ -414,6 +440,6 @@ void Kinect::convertirCoordenadas ( double x, double y )
     double *d = visualizacion->puntoCercano ( x, y );
     if ( d != NULL )
     {
-        visualizacion->actualizarVentana ( deformacion->deformar ( d, true ) );
+        visualizacion->actualizarVentana ( deformacion->deformar ( d, repeler ) );
     }
 }
