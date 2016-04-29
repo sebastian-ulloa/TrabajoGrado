@@ -45,21 +45,23 @@ public:
     void inicializar();
 private:
     int empezarGesto;
+    bool repeler;
     GESTO gesto;
     INuiSensor* sensor;
     HANDLE m_hNextSkeletonEvent;
     Deformacion *deformacion;
     Visualizacion *visualizacion;
+
     float distanciaInicial;
     float inicialDerechaY;
     float inicialIzquierdaY;
-    void deformar();
-    bool inicializarKinect();
     float redondear ( float n );
+    float distancia ( float x1, float x2, float y1, float y2 );
+    bool inicializarKinect();
+    std::vector<ManejadorGestos> valoresGestos;
+    void deformar();
     void deteccion();
     void procesarGestos();
-    float distancia ( float x1, float x2, float y1, float y2 );
-    std::vector<ManejadorGestos> valoresGestos;
     void asignarValoresGestos();
     void reiniciarGestos();
     void convertirCoordenadas ( double x, double y );
