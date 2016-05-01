@@ -347,8 +347,8 @@ void Kinect::asignarValoresGestos()
     {
         valoresGestos.push_back ( mj );
     }
-    valoresGestos[MANO_DERECHA_ARRIBA].asignarValores ( 0, 20 );
-    valoresGestos[MANO_IZQUIERDA_ARRIBA].asignarValores ( 0, 20 );
+    valoresGestos[MANO_DERECHA_ARRIBA].asignarValores ( 0, 7 );
+    valoresGestos[MANO_IZQUIERDA_ARRIBA].asignarValores ( 0, 7 );
     valoresGestos[ROTAR_DERECHA].asignarValores ( -2, 10 );
     valoresGestos[ROTAR_IZQUIERDA].asignarValores ( 2, 10 );
     valoresGestos[ROTAR_ARRIBA].asignarValores ( -2, 10 );
