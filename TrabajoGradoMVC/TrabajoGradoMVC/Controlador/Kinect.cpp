@@ -6,7 +6,6 @@ Kinect::Kinect()
     deformacion = new Deformacion();
     visualizacion = new Visualizacion();
     gesto = NO_GESTO;
-    empezarGesto = 0;
     repeler = true;
 }
 
@@ -14,6 +13,12 @@ Kinect::Kinect()
 Kinect::~Kinect()
 {
 }
+
+/**********************************************************************************************//**
+* Método que revisa frame por frame para determinar qué gesto se está realizando.
+* Si el usuario está realizando uno de los gestos definidos por el enum GESTO, se verifica
+* el estado actual y la cantidad de frames necesarios para realizar la acción asociada al gesto.
+ **************************************************************************************************/
 
 void Kinect::procesarGestos()
 {
@@ -45,7 +50,7 @@ void Kinect::procesarGestos()
                     {
                         valoresGestos[MANOS_ARRIBA].reiniciarValores();
                         std::cout << "Empezo gesto manos arriba" << std::endl;
-                        visualizacion->textoGesto ( "Gesto: Manos arriba" );
+                        visualizacion->textoGesto ( "Gesto: Trasladar" );
                         gesto = MANOS_ARRIBA;
                     }
                 }
@@ -59,7 +64,7 @@ void Kinect::procesarGestos()
                         {
                             valoresGestos[MANO_DERECHA_ARRIBA].reiniciarValores();
                             std::cout << "Empezo gesto mano derecha" << std::endl;
-                            visualizacion->textoGesto ( "Gesto: Mano derecha arriba" );
+                            visualizacion->textoGesto ( "Gesto: Deformar" );
                             gesto = MANO_DERECHA_ARRIBA;
                         }
                     }
@@ -71,7 +76,7 @@ void Kinect::procesarGestos()
                         {
                             valoresGestos[MANO_IZQUIERDA_ARRIBA].reiniciarValores();
                             std::cout << "Empezo gesto mano izquierda" << std::endl;
-                            visualizacion->textoGesto ( "Gesto: Mano iquierda arriba" );
+                            visualizacion->textoGesto ( "Gesto: Rotar" );
                             gesto = MANO_IZQUIERDA_ARRIBA;
                         }
                     }
@@ -160,6 +165,7 @@ void Kinect::procesarGestos()
                 {
                     if ( manoDerecha.y > codoDerecho.y )
                     {
+						visualizacion->textoGesto("Gesto: Zoom");
                         if ( hombroCentro.z - manoDerecha.z < 0.3 && hombroCentro.z - manoIzquierda.z < 0.3 )
                         {
                             std::cout << "Termino gesto" << std::endl;
@@ -203,6 +209,7 @@ void Kinect::procesarGestos()
                     }
                     else
                     {
+						visualizacion->textoGesto("Gesto: Rotar");
                         if ( hombroCentro.z - manoIzquierda.z < 0.3 )
                         {
                             std::cout << "Termino gesto" << std::endl;
@@ -322,11 +329,17 @@ void Kinect::procesarGestos()
     }
 }
 
+/**********************************************************************************************//**
+* Método que calcula la distancia entre dos coordenadas (x,y)
+ **************************************************************************************************/
+
 float Kinect::distancia ( float x1, float x2, float y1, float y2 )
 {
     return sqrt ( pow ( x2 - x1, 2 ) + pow ( y2 - y1, 2 ) );
 }
-
+/**********************************************************************************************//**
+* Método que asigna los valores iniciales para cada gesto: Valor anterior y gesto completo
+**************************************************************************************************/
 void Kinect::asignarValoresGestos()
 {
     ManejadorGestos mj;
@@ -349,6 +362,7 @@ void Kinect::asignarValoresGestos()
     valoresGestos[MOVER_ABAJO].asignarValores ( 4, 4, 7 );
 }
 
+/** Reiniciar valores de los gestos. */
 void Kinect::reiniciarGestos()
 {
     for ( int i = 0; i < 14; i++ )
@@ -357,15 +371,20 @@ void Kinect::reiniciarGestos()
     }
 }
 
+/** Inicia la detección de esqueletos */
 void Kinect::deteccion()
 {
     if ( WAIT_OBJECT_0 == WaitForSingleObject ( m_hNextSkeletonEvent, 0 ) )
     {
         procesarGestos();
-        // Sleep ( 3000 );
     }
 }
 
+
+/**********************************************************************************************//**
+* Detecta si el dispositivo Kinect está conectado. Si lo está, delega a Deformacion para la 
+* creación del modelo tridimensional y a Visualizacion para desplegar en pantalla este modelo.
+**************************************************************************************************/
 void Kinect::inicializar()
 {
     if ( !inicializarKinect() )
@@ -380,12 +399,9 @@ void Kinect::inicializar()
         this->deteccion();
     }
 }
-
-void Kinect::deformar()
-{
-    visualizacion->actualizarVentana ( deformacion->inflar() );
-}
-
+/**********************************************************************************************//**
+* Inicializa el sensor Kinect.
+**************************************************************************************************/
 bool Kinect::inicializarKinect()
 {
     INuiSensor * pNuiSensor;
@@ -427,11 +443,19 @@ bool Kinect::inicializarKinect()
     return true;
 }
 
+/**********************************************************************************************//**
+ * Redondea un float en dos décimas
+ **************************************************************************************************/
+
 float Kinect::redondear ( float n )
 {
     return roundf ( n * 100 ) / 100;
 }
-
+/**********************************************************************************************//**
+* Convierte las coordenadas de la mano derecha captadas por el sensor Kinect, a coordenadas
+* comprendidas por la Visualizacion.
+* Luego, realiza la deformación sobre un punto determinado.
+**************************************************************************************************/
 void Kinect::convertirCoordenadas ( double x, double y )
 {
     x = ( ( x ) * 22 ) / 1;

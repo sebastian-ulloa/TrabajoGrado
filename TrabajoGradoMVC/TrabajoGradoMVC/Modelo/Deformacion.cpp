@@ -3,14 +3,15 @@
 Deformacion::Deformacion()
 {
     esferaSimplex = TMallaSimplex::New();
-    balloon = TDeformar::New();
-    convertirSimplex = TConvertir::New();
-    convertirTriangulo = TConvertirContrario::New();
 }
 
 Deformacion::~Deformacion()
 {
 }
+
+/**********************************************************************************************//**
+ * Crea la esfera inicial, se convierte a malla simplex y luego a vtkPolydata
+ **************************************************************************************************/
 
 vtkPolyData* Deformacion::crearEsfera()
 {
@@ -27,6 +28,10 @@ vtkPolyData* Deformacion::crearEsfera()
     return conversor.meshToPolydata ( simplexATriangular ( esferaSimplex ) );
 }
 
+/**********************************************************************************************//**
+ * Convierte una malla triangular a una malla simplex.
+ **************************************************************************************************/
+
 TMallaSimplex::Pointer Deformacion::triangularASimplex ( TMallaTriangular::Pointer malla )
 {
     TConvertir::Pointer convertir = TConvertir::New();
@@ -34,6 +39,10 @@ TMallaSimplex::Pointer Deformacion::triangularASimplex ( TMallaTriangular::Point
     convertir->Update();
     return convertir->GetOutput();
 }
+
+/**********************************************************************************************//**
+ * Convierte una malla simplex a una malla triangular.
+ **************************************************************************************************/
 
 TMallaTriangular::Pointer Deformacion::simplexATriangular ( TMallaSimplex::Pointer malla )
 {
@@ -43,17 +52,10 @@ TMallaTriangular::Pointer Deformacion::simplexATriangular ( TMallaSimplex::Point
     return convertir->GetOutput();
 }
 
-vtkPolyData* Deformacion::inflar()
-{
-    balloon->SetInput ( esferaSimplex );
-    //balloon->SetAlpha(0.1);
-    //balloon->SetBeta(5);
-    balloon->SetKappa ( 0.01 );
-    balloon->Update();
-    esferaSimplex = balloon->GetOutput();
-    esferaSimplex->DisconnectPipeline();
-    return conversor.meshToPolydata ( simplexATriangular ( esferaSimplex ) );
-}
+/**********************************************************************************************//**
+ * Realiza la deformación sobre la malla simplex un punto y 
+ * recibe la acción que se debe realizar sobre el punto: repeler o atraer.
+ **************************************************************************************************/
 
 vtkPolyData * Deformacion::deformar ( double * punto , bool repeler )
 {

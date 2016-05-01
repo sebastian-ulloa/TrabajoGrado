@@ -14,6 +14,7 @@ typedef itk::SimplexMeshToTriangleMeshFilter < TMallaSimplex, TMallaTriangular >
 typedef itk::DeformableSimplexMesh3DBalloonForceFilter< TMallaSimplex, TMallaSimplex > TDeformar;
 typedef itk::PointsLocator <TMallaSimplex::PointsContainer> TPointsLocator;
 
+/** Clase encargada de la creación y deformación del modelo tridimensional. */
 class Deformacion
 {
 public:
@@ -22,15 +23,11 @@ public:
     vtkPolyData* crearEsfera();
     vtkPolyData* inflar();
     vtkPolyData * deformar ( double  *punto, bool repeler );
-
-
 private:
     ITKaVTK conversor;
     TMallaTriangular::Pointer triangulo;
-    TMallaSimplex::Pointer esferaSimplex;
-    TDeformar::Pointer balloon;
-    TConvertir::Pointer convertirSimplex;
-    TConvertirContrario::Pointer convertirTriangulo;
+    /** Malla simplex que es manipulada y deformada a lo largo de la ejecución */
+    TMallaSimplex::Pointer esferaSimplex;    
     TMallaSimplex::Pointer triangularASimplex ( TMallaTriangular::Pointer malla );
     TMallaTriangular::Pointer simplexATriangular ( TMallaSimplex::Pointer malla );
 
