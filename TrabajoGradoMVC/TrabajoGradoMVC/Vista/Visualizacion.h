@@ -42,29 +42,29 @@ private:
     int zActual;
     /** Define la holgura x que se debe agregar a la esfera deformadora, luego de trasladar horizontalmente el modelo tridimensional. */
     int holguraX;
-	/** Define la holgura y que se debe agregar a la esfera deformadora, luego de trasladar verticalmente el modelo tridimensional. */
+    /** Define la holgura y que se debe agregar a la esfera deformadora, luego de trasladar verticalmente el modelo tridimensional. */
     int holguraY;
     /** Define el modelo tridimensional. */
     vtkPolyData* polydata;
     /** Define la esfera deformadora. */
     vtkSmartPointer<vtkSphereSource> esferaDeformar;
-    
-	/** Mapper del modelo tridimensional. */
-	vtkSmartPointer<vtkPolyDataMapper> mapper;
-	/** Mapper de la esfera deformadora. */
+
+    /** Mapper del modelo tridimensional. */
+    vtkSmartPointer<vtkPolyDataMapper> mapper;
+    /** Mapper de la esfera deformadora. */
     vtkSmartPointer<vtkPolyDataMapper> mapperEsfera;
 
-	/** Actor del modelo tridimensional. */
-	vtkSmartPointer<vtkActor> actor;
-	/** Actor de la esfera deformadora. */
-	vtkSmartPointer<vtkActor> actorEsfera;
-	/** Texto que define la accion que se está realizando. */
-	vtkSmartPointer<vtkTextActor> textAccion;
-	/** Texto que define el gesto que se está realizando. */
-	vtkSmartPointer<vtkTextActor> textGesto;
+    /** Actor del modelo tridimensional. */
+    vtkSmartPointer<vtkActor> actor;
+    /** Actor de la esfera deformadora. */
+    vtkSmartPointer<vtkActor> actorEsfera;
+    /** Texto que define la accion que se está realizando. */
+    vtkSmartPointer<vtkTextActor> textAccion;
+    /** Texto que define el gesto que se está realizando. */
+    vtkSmartPointer<vtkTextActor> textGesto;
 
     vtkSmartPointer<vtkCamera> camera;
-	vtkSmartPointer<vtkRenderer> renderer;
-	vtkSmartPointer<vtkRenderWindow> ventana;
-	vtkSmartPointer<vtkRenderWindowInteractor> interactor;
+    vtkSmartPointer<vtkRenderer> renderer;
+    vtkSmartPointer<vtkRenderWindow> ventana;
+    vtkSmartPointer<vtkRenderWindowInteractor> interactor;
 };

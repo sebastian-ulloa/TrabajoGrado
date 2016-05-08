@@ -151,7 +151,7 @@ void Visualizacion::rotarVertical ( bool direccion )
     {
         textAccion->SetInput ( "Accion: Rotar abajo" );
     }
-    actor->RotateZ ( factor );
+    actor->RotateWXYZ ( factor, 1, 0, 0 );
     ventana->Render();
 }
 /**********************************************************************************************//**
@@ -171,7 +171,7 @@ void Visualizacion::rotarHorizontal ( bool direccion )
         zActual != 0 ? zActual-- : zActual = 7;
         textAccion->SetInput ( "Accion: Rotar izquierda" );
     }
-    actor->RotateY ( factor );
+    actor->RotateWXYZ ( factor, 0, 1, 0 );
     ventana->Render();
 }
 /**********************************************************************************************//**
@@ -206,15 +206,15 @@ void Visualizacion::cambioDeformacion ( bool repeler )
 {
     if ( repeler )
     {
-		textAccion->SetInput("Accion: Deformar - repeler");
+        textAccion->SetInput ( "Accion: Deformar - repeler" );
         actorEsfera->GetProperty()->SetColor ( 0, 0.50196, 1 );
     }
     else
     {
-		textAccion->SetInput("Accion: Deformar - atraer");
+        textAccion->SetInput ( "Accion: Deformar - atraer" );
         actorEsfera->GetProperty()->SetColor ( 0.8, 0, 0 );
     }
-	ventana->Render();
+    ventana->Render();
 }
 
 /**********************************************************************************************//**
