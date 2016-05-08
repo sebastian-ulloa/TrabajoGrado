@@ -37,6 +37,10 @@ Visualizacion::~Visualizacion()
 {
 }
 
+/**********************************************************************************************//**
+ * Método encargado de mostrar la escena. Recibe y muestra el modelo tridimensional inicial
+ **************************************************************************************************/
+
 void Visualizacion::mostrarObjetoInicial ( vtkPolyData * polydata )
 {
     this->polydata = polydata;
@@ -56,11 +60,19 @@ void Visualizacion::mostrarObjetoInicial ( vtkPolyData * polydata )
     ventana->Render();
 }
 
+/**********************************************************************************************//**
+ * Actualizar ventana
+ **************************************************************************************************/
+
 void Visualizacion::actualizarVentana ( vtkPolyData* p )
 {
     polydata->ShallowCopy ( p );
     ventana->Render();
 }
+
+/**********************************************************************************************//**
+ * Acerca o aleja la camara sobre el modelo tridimensional
+ **************************************************************************************************/
 
 void Visualizacion::zoom ( bool accion )
 {
@@ -77,6 +89,10 @@ void Visualizacion::zoom ( bool accion )
     renderer->GetActiveCamera()->Zoom ( factor );
     ventana->Render();
 }
+
+/**********************************************************************************************//**
+ * Mueve horizontalmente el modelo tridimensional
+ **************************************************************************************************/
 
 void Visualizacion::moverHorizontal ( bool direccion )
 {
@@ -97,7 +113,9 @@ void Visualizacion::moverHorizontal ( bool direccion )
     actor->SetPosition ( posicion );
     ventana->Render();
 }
-
+/**********************************************************************************************//**
+* Mueve verticalmente el modelo tridimensional
+**************************************************************************************************/
 void Visualizacion::moverVertical ( bool direccion )
 {
     double posicion[3];
@@ -117,6 +135,10 @@ void Visualizacion::moverVertical ( bool direccion )
     actor->SetPosition ( posicion );
     ventana->Render();
 }
+
+/**********************************************************************************************//**
+* Rota verticalmente el modelo tridimensional
+**************************************************************************************************/
 void Visualizacion::rotarVertical ( bool direccion )
 {
     double factor = 45;
@@ -132,6 +154,9 @@ void Visualizacion::rotarVertical ( bool direccion )
     actor->RotateZ ( factor );
     ventana->Render();
 }
+/**********************************************************************************************//**
+* Rota horizontalmente el modelo tridimensional
+**************************************************************************************************/
 void Visualizacion::rotarHorizontal ( bool direccion )
 {
     double factor = -45;
@@ -149,7 +174,9 @@ void Visualizacion::rotarHorizontal ( bool direccion )
     actor->RotateY ( factor );
     ventana->Render();
 }
-
+/**********************************************************************************************//**
+* Activa o desactiva la visualización de la esfera deformadora
+**************************************************************************************************/
 void Visualizacion::activarDeformacion ( bool activar )
 {
     if ( activar )
@@ -162,24 +189,38 @@ void Visualizacion::activarDeformacion ( bool activar )
     }
     ventana->Render();
 }
-
+/**********************************************************************************************//**
+* Define las coordenadas en las que se encuentra la esfera deformadora
+**************************************************************************************************/
 void Visualizacion::ubicacionEsferaDeformacion ( double x, double y )
 {
     actorEsfera->SetPosition ( x + holguraX, y + holguraY, 3 );
     ventana->Render();
 }
 
+/**********************************************************************************************//**
+ * Cambio sobre la deformacion: atraer o repeler
+ **************************************************************************************************/
+
 void Visualizacion::cambioDeformacion ( bool repeler )
 {
     if ( repeler )
     {
+		textAccion->SetInput("Accion: Deformar - repeler");
         actorEsfera->GetProperty()->SetColor ( 0, 0.50196, 1 );
     }
     else
     {
+		textAccion->SetInput("Accion: Deformar - atraer");
         actorEsfera->GetProperty()->SetColor ( 0.8, 0, 0 );
     }
+	ventana->Render();
 }
+
+/**********************************************************************************************//**
+ * Busca el punto más cercano del modelo tridimensional con respecto a la coordenada (x,y) recibida.
+ * La coordenada z está definida por el atributo zActual de está clase.
+ **************************************************************************************************/
 
 double* Visualizacion::puntoCercano ( double x, double y )
 {
@@ -200,6 +241,10 @@ double* Visualizacion::puntoCercano ( double x, double y )
     }
     return NULL;
 }
+
+/**********************************************************************************************//**
+ * Muestra en pantalla el texto del gesto que se está realizando
+ **************************************************************************************************/
 
 void Visualizacion::textoGesto ( const char* texto )
 {

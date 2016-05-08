@@ -13,6 +13,7 @@
 #ifndef _GESTO_
 #define _GESTO_
 typedef
+/** Valores que representan los gestos detectados por la clase Kinect. */
 enum _GESTO
 {
     MANO_DERECHA_ARRIBA = 1,
@@ -37,6 +38,8 @@ enum _GESTO
 
 #endif _GESTO_
 
+/** Clase controladora. 
+Detecta gestos y define qué acciones realizar sobre Visualización o Deformación */
 class Kinect
 {
 public:
@@ -44,22 +47,22 @@ public:
     ~Kinect();
     void inicializar();
 private:
-    int empezarGesto;
+    /** Define si la deformación está atrayendo o repeliendo. */
     bool repeler;
+    /** Define el gesto actual. */
     GESTO gesto;
+    /** Representa el sensor Kinect conectado. */
     INuiSensor* sensor;
+    /** Manejador de datos del esqueleto del usuario. */
     HANDLE m_hNextSkeletonEvent;
     Deformacion *deformacion;
     Visualizacion *visualizacion;
 
-    float distanciaInicial;
-    float inicialDerechaY;
-    float inicialIzquierdaY;
+   
     float redondear ( float n );
     float distancia ( float x1, float x2, float y1, float y2 );
     bool inicializarKinect();
-    std::vector<ManejadorGestos> valoresGestos;
-    void deformar();
+	std::vector<ManejadorGestos> valoresGestos;
     void deteccion();
     void procesarGestos();
     void asignarValoresGestos();
