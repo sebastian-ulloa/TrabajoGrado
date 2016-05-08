@@ -72,7 +72,6 @@ vtkPolyData * ITKaVTK::meshToPolydata ( TMallaTriangular* mesh )
 {
     //Creat a new vtkPolyData*
     vtkPolyData* newPolyData = vtkPolyData::New();
-    double zmax = -90, zmin = 90;
     //Creat vtkPoints for insertion into newPolyData
     vtkPoints *points = vtkPoints::New();
     //Copy all points into the vtkPolyData structure
@@ -82,14 +81,6 @@ vtkPolyData * ITKaVTK::meshToPolydata ( TMallaTriangular* mesh )
     {
         PointType pnt = pntIterator.Value();
         points->InsertPoint ( i, pnt[0], pnt[1], pnt[2] );
-        if ( pnt[2] > zmax )
-        {
-            zmax = pnt[2];
-        }
-        if ( pnt[2] < zmin )
-        {
-            zmin = pnt[2];
-        }
     }
     newPolyData->SetPoints ( points );
     points->Delete();
