@@ -6,6 +6,6 @@ MODELADO Y MANIPULACIÓN DEL PULMÓN MEDIANTE LA INTERACCIÓN NATURAL DE USUARIO
 
 **Ingeniería de sistemas**
 
-**Universidad Javeriana**
+**Pontificia Universidad Javeriana**
 
 **2016**
